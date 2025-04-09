@@ -13,7 +13,7 @@ export default function AssignmentRoutes(app) {
     app.put("/api/assignments/:assignmentId", async (req, res) => {
         const { assignmentId } = req.params;
         const assignmentUpdates = req.body;
-        const updatedAssignment = await assignmentsDao.updateAssignment(assignmentId, assignmentUpdates);
-        res.send(updatedAssignment);
+        const status = await assignmentsDao.updateAssignment(assignmentId, assignmentUpdates);
+        res.send(status);
     })
 }

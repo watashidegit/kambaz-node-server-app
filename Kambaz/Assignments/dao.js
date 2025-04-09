@@ -1,30 +1,24 @@
-import Database from "../Database/index.js";
+import model from "./model.js";
 import { v4 as uuidv4 } from "uuid";
 
 // retrieve a course's assignments
-export function findAssignmentsForCourse(courseId) {
-    const { assignments } = Database;
-    return assignments.filter((assignment) => assignment.course === courseId);
+export async function findAssignmentsForCourse(courseId) {
+    return await model.find({ course: courseId });
 }
 
 // create a new assignment for a course
-export function createAssignment(assignment) {
+export async function createAssignment(assignment) {
     const newAssignment = { ...assignment, _id: uuidv4() };
-    Database.assignments.push(newAssignment);
-    return newAssignment;
+    return await model.create(newAssignment);
 }
 
 // delete assignment by aid
-export function deleteAssignment(assignmentId) {
-    const { assignments } = Database;
-    Database.assignments = assignments.filter((a) => a._id !== assignmentId );
+export async function deleteAssignment(assignmentId) {
+    return await model.deleteOne({_id: assignmentId})
 }
 
 // update assignment by aid
 export function updateAssignment(assignmentId, assignmentUpdates) {
-    const { assignments } = Database;
-    const assignment = assignments.find((assignment) => assignment._id === assignmentId);
-    Object.assign(assignment, assignmentUpdates);
-    return assignment;
+    return model.updateOne({ _id: assignmentId }, assignmentUpdates);
 }
   

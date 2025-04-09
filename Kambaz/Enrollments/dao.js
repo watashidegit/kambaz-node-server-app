@@ -1,46 +1,25 @@
-import Database from "../Database/index.js";
-import { v4 as uuidv4 } from "uuid";
+import model from "./model.js";
 
+// retrieve a user's registered courses
+export async function findCoursesForUser(userId) {
+    const enrollments = await model.find({ user: userId }).populate("course");
+    return enrollments.map((enrollment) => enrollment.course);
+}
+   
 // retrieve a course's enrolled users
-export function getEnrolledUsersInCourse(courseId) {
-    const { enrollments, users } = Database;
-    const courseEnrollments = enrollments.filter((e) => e.course === courseId);
-    const enrolledUserIds = courseEnrollments.map((e) => e.user);
-    const enrolledUsers = users.filter((user) => enrolledUserIds.includes(user._id));
-    return enrolledUsers;
-
+export async function findUsersForCourse(courseId) {
+    const enrollments = await model.find({ course: courseId }).populate("user");
+    return enrollments.map((enrollment) => enrollment.user);
 }
-
-// retrieve all enrollments lists
-export function getEnrollments() {
-    const { enrollments } = Database;
-    return enrollments;
-}
-
+   
 // enroll a user in a course
-export function enrollUserInCourse(userId, courseId) {
-    const { enrollments } = Database;
-    console.log(courseId);
-
-    const newEnrollment = {
-        _id: uuidv4(),
-        user: userId,
-        course: courseId,
-    };
-
-    enrollments.push(newEnrollment);
-    return newEnrollment;
+export function enrollUserInCourse(user, course) {
+    const newEnrollment = { user, course, _id: `${user}-${course}` };
+    return model.create(newEnrollment);
 }
-
+   
 // unenroll a user
-export function unenrollUserFromCourse(userId, courseId) {
-    const { enrollments } = Database;
-    const index = enrollments.findIndex((e) => e.user === userId && e.course === courseId);
-
-    if (index !== -1) {
-        enrollments.splice(index, 1);
-        return { success: true }; 
-    }
-    return { success: false, message: "Enrollment not found" };
-
+export function unenrollUserFromCourse(user, course) {
+    return model.deleteOne({ user, course });
 }
+   
