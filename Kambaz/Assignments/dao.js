@@ -14,7 +14,7 @@ export async function createAssignment(assignment) {
 
 // delete assignment by aid
 export async function deleteAssignment(assignmentId) {
-    return await model.deleteOne({_id: assignmentId})
+    return await model.deleteOne({_id: assignmentId});
 }
 
 // update assignment by aid

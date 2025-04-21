@@ -2,6 +2,7 @@ import * as dao from "./dao.js";
 import * as modulesDao from "../Modules/dao.js";
 import * as assignmentsDao from "../Assignments/dao.js";
 import * as enrollmentsDao from "../Enrollments/dao.js";
+import * as quizzesDao from "../Quizzes/dao.js";
 
 export default function CourseRoutes(app) {
   
@@ -85,5 +86,29 @@ export default function CourseRoutes(app) {
         res.json(course)
     })
 
+    // retrieve a course's quiz list
+    app.get("/api/courses/:courseId/quizzes", async (req, res) => {
+        const { courseId } = req.params;
+        const { title } = req.query;
+        if (title) {
+            const quizList = await quizzesDao.findQuizByPartialTitle(courseId, title);
+            res.json(quizList);
+            return;
+        }
+        const quizList = await quizzesDao.findQuizzesForCourse(courseId);
+        res.json(quizList);
+    })
 
+    // create a new quiz for a course
+    app.post("/api/courses/:courseId/quizzes", async (req, res) => {
+        try {
+            const { courseId } = req.params;
+            const newQuiz = { ...req.body, course: courseId };
+            const saved = await quizzesDao.createQuiz(newQuiz);
+            res.json(saved);
+        } catch (err) {
+            console.error("Failed to create quiz:", err);
+            res.status(500).json({ error: err.message });
+        }
+    });
 }
