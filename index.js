@@ -13,7 +13,8 @@ import EnrollmentsRoutes from './Kambaz/Enrollments/routes.js';
 import QuizzesRoutes from './Kambaz/Quizzes/routes.js';
 import AttemptsRoutes from './Kambaz/Attempts/routes.js';
  
-const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING ||  "mongodb://127.0.0.1:27017/kambaz"
+const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING 
+//||  "mongodb://127.0.0.1:27017/kambaz"
 mongoose.connect(CONNECTION_STRING);
 
 const FRONTEND_URL = "https://kambaz-react-web-app-cs5610-sp25-quiz.netlify.app";
