@@ -30,7 +30,7 @@ export default function QuizzesRoutes(app) {
     app.get("/api/quizzes/:qid/preview/:uid", async (req, res) => {
         try {
             const { qid, uid } = req.params;
-            const attempt = await dao.findAttemptByQuizAndUser(qid, uid, true);
+            const attempt = await AttemptsDao.findAttemptByQuizAndUser(qid, uid, true);
             if (!attempt) {
                 return res.status(404).json({ message: "No preview found" });
             }
@@ -49,13 +49,13 @@ export default function QuizzesRoutes(app) {
                 isPreview: true
             };
 
-            const existing = await dao.findAttemptByQuizAndUser(qid, attempt.userId, true);
+            const existing = await AttemptsDao.findAttemptByQuizAndUser(qid, attempt.userId, true);
 
             let result;
             if (existing) {
-                result = await dao.updateAttempt(existing._id, attempt);
+                result = await AttemptsDao.updateAttempt(existing._id, attempt);
             } else {
-                result = await dao.createAttempt(attempt);
+                result = await AttemptsDao.createAttempt(attempt);
             }
 
             res.json(result);
@@ -67,7 +67,7 @@ export default function QuizzesRoutes(app) {
     app.get("/api/quizzes/:qid/attempts/:uid", async (req, res) => {
         try {
             const { qid, uid } = req.params;
-            const attempts = await dao.findAttemptsByQuizAndUser(qid, uid);
+            const attempts = await AttemptsDao.findAttemptsByQuizAndUser(qid, uid);
             res.json(attempts);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -77,7 +77,7 @@ export default function QuizzesRoutes(app) {
     app.get("/api/quizzes/:qid/attempts/:uid/latest", async (req, res) => {
         try {
             const { qid, uid } = req.params;
-            const attempt = await dao.findLatestAttemptByQuizAndUser(qid, uid);
+            const attempt = await AttemptsDao.findLatestAttemptByQuizAndUser(qid, uid);
             if (!attempt) {
                 return res.status(404).json({ message: "No attempts found" });
             }
@@ -99,7 +99,7 @@ export default function QuizzesRoutes(app) {
                 submittedAt: req.body.submittedAt || new Date().toISOString()
             };
 
-            const result = await dao.createAttempt(attempt);
+            const result = await AttemptsDao.createAttempt(attempt);
             res.json(result);
         } catch (error) {
             console.error("Error saving attempt:", error);
